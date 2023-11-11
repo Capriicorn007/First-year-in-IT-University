@@ -1,0 +1,48 @@
+pp :: Result -> IO () --Haskelle, Haskelelle, rede mihi středníkes meas
+pp x = putStr (concat (map (++"\n") x)) --Printing Result
+
+type Result = [String]
+
+puzzle2 :: Result
+puzzle2 = ["AC DE",
+           "FBHIJ",
+           "KGLNO",
+           "PQMRS",
+           "UVWXT"]
+
+puzzle :: Result -> [Char] -> Result --Basicaly main
+puzzle _ [] = []
+puzzle (xs) (y:ys) = let puzzle3 = concat xs --concating 'couse I cannot(not smart enough to) read through list of strings
+                         move = y
+                     in  (check puzzle3 y) puzzle puzzle3 ys
+                        
+check :: [Char] -> Char -> Result --Locating anchor to aply changes
+check (x:z:xs) y | x == ' '&& z == y = repL (x:z:xs) y
+check (x:z:xs) y | x == y&& z == ' ' = repR (x:z:xs) y
+check (x:z:xs) y | x == ' '&& head(drop((kdejsem(' ' (x:z:xs))-5) (x:z:xs))) == y = repU (x:z:xs) y
+check (x:z:xs) y | x == ' '&& head(drop((kdejsem(' ' (x:z:xs))+5) (x:z:xs))) == y = repU (x:z:xs) y
+                 |otherwise check(z:xs) y
+check [x] = []
+check [] = []
+
+--aplyinf changes 
+repR :: String -> Char -> String
+repR (x:z:xs) y = replace (((kdejsem y (x:z:xs))+1) y (x:z:xs)) replace (((kdejsem y (x:z:xs))-1) ' ' (x:z:xs))
+
+repL :: String -> Char -> String
+repL (x:z:xs) y = replace (((kdejsem y (x:z:xs))-1) y (x:z:xs)) replace (((kdejsem y (x:z:xs))+1) ' ' (x:z:xs))
+
+repU :: String -> Char -> String
+repU (x:z:xs) y = replace (((kdejsem y (x:z:xs))+5) y (x:z:xs)) replace (((kdejsem y (x:z:xs))) ' ' (x:z:xs))
+
+repD :: String -> Char -> String
+repD (x:z:xs) y = replace (((kdejsem y (x:z:xs))-5) y (x:z:xs)) replace (((kdejsem y (x:z:xs))+5) ' ' (x:z:xs))
+
+replace :: Int -> Char -> String -> String
+replace i c st = take i st ++ c ++ drop (i + 1) st
+
+--Translation: I am here
+kdejsem :: Char -> String -> Int
+kdejsem y (x:xs) = let z = 1
+                   in if x == y then z 
+                      else z + 1 kdejsem xs
