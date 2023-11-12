@@ -1,0 +1,53 @@
+type Result = [String]
+
+pp :: Result -> IO () --Haskelle, Haskelelle, rede mihi středníkes meas
+pp x = putStr (concat (map (++"\n") x)) --Tak nakonec mi nepohlo googlení, ale vyspat se na to a uz to chápu 
+
+puzzle2 :: Result --Omlouvám se za caviky okolo toho, byl jsem dost ztracený a začínal zoufat, že vyletím
+puzzle2 = ["AC DE",
+           "FBHIJ",
+           "KGLNO",
+           "PQMRS",
+           "UVWXT"]
+
+puzzle :: Result -> [Char] -> Result --Applying moves
+puzzle (xs) (y:ys) = let puzzle3 = concat xs --Making it string 'couse I am dumb
+                         move = y
+                     in (puzzle (check 0 puzzle3 y) ys)
+puzzle (xs) [] = xs
+                        
+check :: Int -> [Char] -> Char -> Result --Processing moves
+check n [] _ = []
+check n [x] _ = []
+check n (xs) y | head(drop n (xs)) == ' ' && head(drop (n+1) (xs)) == y = makeLoS (repL n (xs) y)
+check n (xs) y | head(drop n (xs)) == y && head(drop (n+1) (xs)) == ' ' = makeLoS (repR n (xs) y)
+check n (xs) y | head(drop n (xs)) == ' ' && (head(drop (n+5) (xs))) == y = makeLoS (repU n (xs) y)
+check n (xs) y | head(drop n (xs)) == y && (head(drop (n+5) (xs))) == ' ' = makeLoS (repD n (xs) y)
+               |otherwise = (check (n+1) (xs) y)
+                 
+repL :: Int -> String -> Char -> String --moving letters, not stone(space) to Right, Left, Up, Down
+repL n (xs) y = (take (n+1) ((take n (xs)) ++ (y:[]) ++ (drop (n+1) (xs)))) ++ (' ':[]) ++ (drop (n+2) (xs))
+
+repR :: Int -> String -> Char -> String
+repR n (xs) y = (take (n+1) ((take n (xs)) ++ (' ':[]) ++ (drop (n+1) (xs)))) ++ (y:[]) ++ (drop (n+2) (xs))
+
+repU :: Int -> String -> Char -> String
+repU n (xs) y = (take (n+5) ((take n (xs)) ++ (y:[]) ++ (drop (n+1) (xs)))) ++ (' ':[]) ++ (drop (n+6) (xs))
+
+repD :: Int -> String -> Char -> String
+repD n (xs) y = (take (n+5) ((take n (xs)) ++ (' ':[]) ++ (drop (n+1) (xs)))) ++ (y:[]) ++ (drop (n+6) (xs))
+
+replace :: Int -> Char -> String -> String
+replace i c st = take i st ++ (c:[]) ++ drop (i+1) st 
+
+kdejsem :: Int -> Char -> String -> Int --My position in string
+kdejsem n y (x:xs) = let z = 1 
+                   in if x == y then (z+n) 
+                      else kdejsem (z+1) y xs
+kdejsem n y [] = 0
+
+makeLoS :: String -> [String] --Making it List of strings again
+makeLoS [] = []
+makeLoS st = take 5 st : makeLoS (drop 5 st)
+
+
